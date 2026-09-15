@@ -1,4 +1,4 @@
-"""依存ライブラリなしで動く、学習用の小さなチャットボット。"""
+"""ローカル fallback と Gemini API に対応した学習用チャットボット。"""
 
 from __future__ import annotations
 
@@ -7,6 +7,9 @@ from datetime import datetime
 from difflib import SequenceMatcher
 import random
 import re
+import os
+
+from google import genai
 
 
 @dataclass
@@ -68,9 +71,52 @@ class SimpleAI:
         )
 
 
+class GeminiChatbot:
+    """Gemini API に会話履歴を渡して自然な返答を生成するチャットボット。"""
+
+    def __init__(
+        self,
+        model: str = "gemini-3.6-flash",
+        system_prompt: str = "あなたは親切で簡潔な日本語アシスタントです。",
+        client: object | None = None,
+        api_key: str | None = None,
+    ) -> None:
+        self.model = model
+        self.system_prompt = system_prompt
+        normalized_api_key = (api_key if api_key is not None else os.getenv("GEMINI_API_KEY", "")).strip()
+        self.client = client or genai.Client(api_key=normalized_api_key)
+        self.chat = self.client.chats.create(
+            model=self.model,
+            config={"system_instruction": self.system_prompt},
+        )
+
+    def respond(self, message: str) -> str:
+        text = message.strip()
+        if not text:
+            return "何か話しかけてください。"
+
+        try:
+            response = self.chat.send_message(message=text)
+        except Exception as error:
+            if "quota" in str(error).lower() or "resource exhausted" in str(error).lower():
+                return "Gemini API の利用上限に達しました。時間を置くか、Google AI Studio の利用状況を確認してください。"
+            raise
+
+        return response.text or "すみません、うまく返答できませんでした。"
+
+
+def create_bot() -> SimpleAI | GeminiChatbot:
+    """Gemini API キーがあれば高性能版、なければローカル版を返す。"""
+    api_key = os.getenv("GEMINI_API_KEY", "").strip()
+    if api_key:
+        return GeminiChatbot(api_key=api_key)
+    return SimpleAI()
+
+
 def main() -> None:
-    bot = SimpleAI()
-    print("SimpleAI を起動しました。終了するには「終了」と入力してください。")
+    bot = create_bot()
+    mode = "Gemini API" if isinstance(bot, GeminiChatbot) else "ローカル fallback"
+    print(f"SimpleAI ({mode}) を起動しました。終了するには「終了」と入力してください。")
     while True:
         try:
             message = input("あなた > ")

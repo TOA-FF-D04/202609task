@@ -1,0 +1,14 @@
+[project]
+name = "simple-ai-chatbot"
+version = "0.1.0"
+description = "A small Japanese chatbot with local and Gemini modes"
+requires-python = ">=3.10"
+dependencies = [
+    "google-genai>=1.0.0",
+    "matplotlib>=3.8.0",
+    "plotly>=6.0.0",
+    "yfinance>=0.2.50",
+]
+
+[dependency-groups]
+dev = []
