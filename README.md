@@ -54,7 +54,7 @@ GitHub リポジトリの `Settings` > `Pages` で、公開元を `GitHub Action
 
 当日の値動きページは `/202609task/realtime.html` です。平日の東京市場時間帯に5分足を再取得し、GitHub Actions で更新します。秒単位のリアルタイム価格ではなく、データ提供元と Actions の遅延を含む準リアルタイム表示です。
 
-スケジュール実行は GitHub の混雑状況により遅延することがあります。Actions の `Update Nikkei dashboard` 画面で、`schedule` と表示された実行が作成されているか確認できます。
+スケジュール実行は GitHub の混雑状況により遅延することがあります。Actions の `Update Nikkei dashboard` 画面で、`schedule` と表示された実行が作成されているか確認できます。現在は5分 cron に統一しており、16:30 JST の更新もこのスケジュールに含まれます。
 
 ニュース影響分析ページは `/202609task/news-impact.html` です。Google ニュース RSS を約5分ごとに取得し、見出しから日経平均への上昇・下落・中立の影響方向を推測します。Gemini API キーがある場合は補助要約も表示します。
 
