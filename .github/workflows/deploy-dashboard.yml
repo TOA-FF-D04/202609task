@@ -4,6 +4,8 @@ on:
   schedule:
     # Weekdays at 16:30 JST (07:30 UTC), after the Tokyo market close.
     - cron: "30 7 * * 1-5"
+    # Refresh the intraday page every five minutes during Tokyo market hours.
+    - cron: "*/5 0-7 * * 1-5"
   workflow_dispatch:
 
 permissions:
@@ -43,6 +45,9 @@ jobs:
 
       - name: Generate prediction dashboard
         run: uv run python nikkei_prediction_dashboard.py
+
+      - name: Generate realtime dashboard
+        run: uv run python nikkei_realtime_dashboard.py
 
       - name: Create Pages entry point
         run: cp output/nikkei_dashboard.html output/index.html

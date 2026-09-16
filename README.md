@@ -52,6 +52,8 @@ GitHub リポジトリの `Settings` > `Pages` で、公開元を `GitHub Action
 
 実績ページは `/202609task/`、予測専用ページは `/202609task/prediction.html` で参照できます。GitHub Actions が毎日、両方のページを更新します。
 
+当日の値動きページは `/202609task/realtime.html` です。平日の東京市場時間帯に5分足を再取得し、GitHub Actions で更新します。秒単位のリアルタイム価格ではなく、データ提供元と Actions の遅延を含む準リアルタイム表示です。
+
 Gemini の要約も公開したい場合は、リポジトリの `Settings` > `Secrets and variables` > `Actions` に `GEMINI_API_KEY` という名前で API キーを登録します。グラフだけなら Secret は不要です。
 
 ## 日経平均ボット
