@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime
 import html
 import os
 from pathlib import Path
@@ -76,10 +76,13 @@ def summarize_with_gemini(items: list[NewsItem]) -> str:
         "以下の日経平均関連ニュースを日本語で3文以内に要約してください。"
         "ニュースから推測できる影響方向だけを述べ、投資助言や断定は避けてください。\n" + titles
     )
-    response = genai.Client(api_key=api_key).models.generate_content(
-        model="gemini-3.6-flash",
-        contents=prompt,
-    )
+    try:
+        response = genai.Client(api_key=api_key).models.generate_content(
+            model="gemini-3.6-flash",
+            contents=prompt,
+        )
+    except Exception as error:
+        return f"Gemini の要約は取得できませんでした（{type(error).__name__}）。ニュースのキーワード分析は表示しています。"
     return response.text or "要約を取得できませんでした。"
 
 

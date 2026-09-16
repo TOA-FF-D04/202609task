@@ -1,8 +1,9 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
-from nikkei_news_impact import NewsItem, classify_impact, create_news_page
+from nikkei_news_impact import NewsItem, classify_impact, create_news_page, summarize_with_gemini
 
 
 class NikkeiNewsImpactTest(unittest.TestCase):
@@ -19,6 +20,14 @@ class NikkeiNewsImpactTest(unittest.TestCase):
         self.assertIn("日経平均ニュース影響分析", page)
         self.assertIn("上昇要因", page)
         self.assertIn('content="300"', page)
+
+    def test_gemini_failure_does_not_stop_news_page(self) -> None:
+        items = [NewsItem("日経平均が反発", "https://example.com", "今日", "Example", "上昇要因", 25)]
+        with mock.patch.dict("os.environ", {"GEMINI_API_KEY": "test-key"}, clear=True):
+            with mock.patch("nikkei_news_impact.genai.Client", side_effect=RuntimeError("quota")):
+                result = summarize_with_gemini(items)
+
+        self.assertIn("キーワード分析は表示しています", result)
 
 
 if __name__ == "__main__":
