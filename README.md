@@ -11,6 +11,7 @@ Gemini API を使って会話履歴を考慮した返答を生成できる、学
 - Gemini API で複雑な会話を続ける
 - 毎日の日経平均を取得してグラフ化する
 - 日経平均の値動きを Gemini に要約させる
+- 翌営業日の値動きを学習用モデルで予測する
 - 期間切り替えとマウスオーバーに対応した Web グラフを表示する
 
 ## 実行方法
@@ -49,6 +50,8 @@ GitHub Actions で平日の日本時間16:30ごろに日経平均データを取
 
 GitHub リポジトリの `Settings` > `Pages` で、公開元を `GitHub Actions` に設定してください。公開 URL は通常 `https://<GitHubユーザー名>.github.io/202609task/` です。
 
+実績ページは `/202609task/`、予測専用ページは `/202609task/prediction.html` で参照できます。GitHub Actions が毎日、両方のページを更新します。
+
 Gemini の要約も公開したい場合は、リポジトリの `Settings` > `Secrets and variables` > `Actions` に `GEMINI_API_KEY` という名前で API キーを登録します。グラフだけなら Secret は不要です。
 
 ## 日経平均ボット
@@ -63,7 +66,7 @@ uv run python nikkei_bot.py
 
 ## Web ダッシュボード
 
-1年・1か月は日足、1日は前日分も含む5分足の期間切り替え、範囲スライダー、マウスオーバーによる終値表示に対応しています。
+1年・1か月は日足、1日は前日分も含む5分足の期間切り替えに対応しています。破線で1営業日先・5営業日先（約1週間）・20営業日先（約1か月）の予測推移を表示し、各線の右端に現時点からの予測を追加します。
 
 ```powershell
 uv run python nikkei_dashboard.py
@@ -71,3 +74,20 @@ Start-Process .\output\nikkei_dashboard.html
 ```
 
 マウスをグラフ上に移動すると、その日の終値がカーソル付近に表示されます。
+
+予測だけを確認する場合:
+
+```powershell
+uv run python nikkei_prediction_dashboard.py
+Start-Process .\output\prediction.html
+```
+
+## 翌営業日の予測モデル
+
+過去5年の日足から、直近のリターン・移動平均・ボラティリティ・曜日を特徴量にして、翌営業日のリターンを予測します。時系列順に過去80%を学習、残り20%を検証に使います。
+
+```powershell
+uv run python nikkei_predictor.py
+```
+
+予測結果と検証指標は `output/nikkei_model_metrics.txt` に保存されます。このモデルは学習用のベースラインであり、投資助言や利益を保証するものではありません。

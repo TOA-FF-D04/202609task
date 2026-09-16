@@ -41,6 +41,9 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: uv run python nikkei_dashboard.py
 
+      - name: Generate prediction dashboard
+        run: uv run python nikkei_prediction_dashboard.py
+
       - name: Create Pages entry point
         run: cp output/nikkei_dashboard.html output/index.html
 
