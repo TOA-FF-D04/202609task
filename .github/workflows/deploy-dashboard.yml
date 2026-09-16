@@ -15,7 +15,8 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  # Keep scheduled runs queued instead of cancelling the previous Pages deployment.
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
