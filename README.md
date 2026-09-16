@@ -54,6 +54,8 @@ GitHub リポジトリの `Settings` > `Pages` で、公開元を `GitHub Action
 
 当日の値動きページは `/202609task/realtime.html` です。平日の東京市場時間帯に5分足を再取得し、GitHub Actions で更新します。秒単位のリアルタイム価格ではなく、データ提供元と Actions の遅延を含む準リアルタイム表示です。
 
+ニュース影響分析ページは `/202609task/news-impact.html` です。Google ニュース RSS を約5分ごとに取得し、見出しから日経平均への上昇・下落・中立の影響方向を推測します。Gemini API キーがある場合は補助要約も表示します。
+
 Gemini の要約も公開したい場合は、リポジトリの `Settings` > `Secrets and variables` > `Actions` に `GEMINI_API_KEY` という名前で API キーを登録します。グラフだけなら Secret は不要です。
 
 ## 日経平均ボット

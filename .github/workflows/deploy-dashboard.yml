@@ -49,6 +49,11 @@ jobs:
       - name: Generate realtime dashboard
         run: uv run python nikkei_realtime_dashboard.py
 
+      - name: Generate news impact dashboard
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: uv run python nikkei_news_impact.py
+
       - name: Create Pages entry point
         run: cp output/nikkei_dashboard.html output/index.html
 
